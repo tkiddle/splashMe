@@ -1,0 +1,121 @@
+<?php 
+
+	/**
+	 *@file
+	 *splash_me.module
+	 */
+
+	//Create the admin configuration form
+	function splash_me_admin() {
+
+		//Create new array to hold form elements
+		$form = array();
+
+		//Form element 1
+		$form['splash_me_node'] = array(
+			//Type of field
+			'#type' => 'textfield',
+			//Label for the field
+			'#title' => t('Content node ID'),
+			//Get the value from the DB else use ) which is the default
+			'#default_value' => variable_get('splash_me_node', 1),
+			//HTML input width
+			'#size' => 3,
+			//Max length of chars
+			'#maxlength' => 6,
+			//Description of the field
+			'#description' => t("Node Id of the content to be used as splash screen."),
+			//Whether the field is required
+			'#required' => FALSE
+		);
+
+		/*$form['splash_me_auto_redirect'] = array (
+			'#type' => 'checkbox',
+			'#title' => t('Auto redirect'),
+			'#options' => drupal_map_assoc(array(t('waw'), t('dad'))),
+			'#description' => t('Should this page re-direct after a set amount of time?'),
+			'#required' => FALSE
+		);*/
+
+		$form['splash_me_redirect_time'] = array(
+			//Type of field
+			'#type' => 'textfield',
+			//Label for the field
+			'#title' => t('Redirect time'),
+			//Get the value from the DB else use 20 which is the default
+			'#default_value' => variable_get('splash_me_redirect_time', 20),
+			//HTML input width
+			'#size' => 3,
+			//Max length of chars
+			'#maxlength' => 6,
+			//Description of the field
+			'#description' => t("The time it takes to redirect back to the homepage in seconds."),
+			//Whether the field is required
+			'#required' => FALSE
+		);
+
+	  //Once the form is built return it passing the $form array
+	  return system_settings_form($form);
+	}
+
+
+
+	//Create the menu item for the admin panel
+	function splash_me_menu() {
+  	
+	  	$items = array();
+
+		$items['admin/config/user-interface/splash_me'] = array(
+			'title' => 'Splash Me',
+			'description' => 'Configuration for the Splash Me module.',
+			'page callback' => 'drupal_get_form',
+			'page arguments' => array('splash_me_admin'),
+			'access arguments' => array('administer users'),
+			'type' => MENU_NORMAL_ITEM
+		);
+	
+		return $items;
+
+	}
+
+	//Get the values from admin page
+	$splashPage = variable_get('splash_me_node');
+	//Get current url path
+	$currentPage = current_path();
+
+
+	//Check if the session exists on every page load
+	function splash_me_init() {	
+
+		if(!isset($_SESSION['splash_me_conf'])){
+
+			$_SESSION['splash_me_conf'] = array();
+			
+		}	
+
+	}
+
+	//if 'show' var not set then set it
+	if(!isset($_SESSION['splash_me_conf']['show'])) {
+
+		$_SESSION['splash_me_conf']['show'] = 'TRUE';
+
+	}
+
+	//If 'show' var is TRUE perform redirect
+	if($_SESSION['splash_me_conf']['show'] === 'TRUE') {		
+
+		//If user is not logged in
+		if(!$GLOBALS['user']->uid){
+			
+			if ($currentPage !== ('node/' . $splashPage)){
+				//Redirect to the splash screen
+				drupal_goto('node/' . $splashPage);			
+			}
+
+		}
+
+	}
+
+	//Prevent further redirects for user
+	$_SESSION['splash_me_conf']['show'] = 'FALSE';
