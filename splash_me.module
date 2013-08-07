@@ -33,7 +33,7 @@
 
 
 	//Get the values from admin page
-	$splashPage = variable_get('splash_me_node');
+	$splashPage = variable_get('splash_me_node_lookup');
 	//Get current url path
 	$currentPage = current_path();
 
@@ -80,7 +80,6 @@
 
 
 
-
 	//Callback for 'splash-me-node-results' url
 	function splash_me_get_nodes($string) {
 
@@ -105,3 +104,14 @@
 		exit;
 
 	} 
+
+	function splash_me_custom_theme() {
+
+		if (arg(0) == 'node' && arg(1) == variable_get('splash_me_node_lookup')) {
+
+			return variable_get('splash_me_themes');
+
+		}
+
+	}
+

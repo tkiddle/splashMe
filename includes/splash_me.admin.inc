@@ -6,8 +6,23 @@
 	 */
 
 	//Create the admin configuration form
-	function splash_me_admin() {
+	
 
+
+
+	function splash_me_admin() {
+	
+		$themNames = list_themes($refresh = FALSE);
+		$themesArray = array('default' => '--select a theme--');
+		
+		foreach ($themNames as $item) {
+
+			$key = $item->name;
+			$value = $item->name;
+
+			$themesArray[$key] = $value;
+		}
+		
 		//Create new array to hold form elements
 		$form = array();
 
@@ -30,6 +45,20 @@
 			//The url to trigger the callback function
 			'#autocomplete_path' => 'splash-me-node-results',
 		); 
+
+		$form['splash_me_themes'] = array (
+
+			'#type' => 'select',
+			'#options' => $themesArray,
+			'#title' => 'Splash page theme',
+			'#description' => 'Select a theme to use for the splash page',
+			'#default_value' => variable_get('splash_me_themes'),
+			'#required' => FALSE,
+
+		);
+
+		unset($themesArray);
+
 
 		$form['splash_me_redirect_time'] = array(
 			//Type of field
