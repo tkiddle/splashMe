@@ -30,55 +30,65 @@
 		return $items;
 
 	}
-
-
-	//Get the values from admin page
-	$splashPage = variable_get('splash_me_node_lookup');
-	//Get current url path
-	$currentPage = current_path();
-
-
-
-	//Check if the session exists on every page load
+	
 	function splash_me_init() {	
 
+		//Get the values from admin page
+		$splashPage = variable_get('splash_me_node_lookup');
+
+		//Check if the session exists on every page load
 		if(!isset($_SESSION['splash_me_conf'])){
 
 			$_SESSION['splash_me_conf'] = array();
 			
-		}	
-
-	}
+		}
 
 
-	//if 'show' var not set then set it
-	if(!isset($_SESSION['splash_me_conf']['show'])) {
-
-		$_SESSION['splash_me_conf']['show'] = 'TRUE';
-
-	}
-
-
-	//If 'show' var is TRUE perform redirect
-	if($_SESSION['splash_me_conf']['show'] === 'TRUE') {		
-
-		//If user is not logged in
-		if(!$GLOBALS['user']->uid){
+		if(!isset($_SESSION['splash_me_conf']['time_set'])){
 			
-			if ($currentPage !== ('node/' . $splashPage)){
-				//Redirect to the splash screen
-				drupal_goto('node/' . $splashPage);			
+			//Set the time
+			$_SESSION['splash_me_conf']['time_set'] = date("U", time());
+
+			//if 'show' var not set then set it
+			if(!isset($_SESSION['splash_me_conf']['show'])) {
+
+				$_SESSION['splash_me_conf']['show'] = 'TRUE';
+
+			}
+
+		}				
+
+		//If 'show' var is TRUE perform redirect
+		if($_SESSION['splash_me_conf']['show'] === 'TRUE') {		
+
+			//If user is not logged in
+			if(!$GLOBALS['user']->uid){
+				
+				if (arg(1) !== $splashPage){
+
+					//Redirect to the splash screen
+					drupal_goto('node/' . $splashPage);	
+
+				}
+
 			}
 
 		}
+			
+		//Test to see if expiery time is up
+		if (date("U", time())  >= $_SESSION['splash_me_conf']['time_set'] + (10)){
 
+			//If the time is up unset the var and reset the process
+			unset($_SESSION['splash_me_conf']);
+
+		} else {
+
+			//Prevent further redirects for user
+			$_SESSION['splash_me_conf']['show'] = 'FALSE';
+
+		}
+	
 	}
-
-	//Prevent further redirects for user
-	$_SESSION['splash_me_conf']['show'] = 'FALSE';
-
-
-
 
 	//Callback for 'splash-me-node-results' url
 	function splash_me_get_nodes($string) {
@@ -98,6 +108,8 @@
 
 		}
 
+
+
 		//Output the array as JSON data
 		drupal_json_output($matches);
 
@@ -108,10 +120,38 @@
 	function splash_me_custom_theme() {
 
 		if (arg(0) == 'node' && arg(1) == variable_get('splash_me_node_lookup')) {
-
+			
 			return variable_get('splash_me_themes');
 
 		}
 
+	}
+
+	//Add a class to the body tag on the splash page
+	function splash_me_preprocess_html(&$vars) {
+
+		if (arg(0) == 'node' && arg(1) == variable_get('splash_me_node_lookup')) {
+
+			$vars['classes_array']['class'] = 'splash_me_page';
+
+		}
+
+	}
+
+	function splash_me_node_view($node) {
+
+		if (variable_get('splash_me_continue_link')) {
+
+			$continueUrl = variable_get('splash_me_continue_url');
+			$continueText = variable_get('splash_me_continue_link_text');
+
+			$node->content['splash_me_continue_link'] = array(
+				"#markup"=> '<a href=" '. $continueUrl . '" title="Continue to the site">'. $continueText .'</a>',
+				"#weight"=> 100
+			);              
+
+		}
+		
+		return $node;
 	}
 
