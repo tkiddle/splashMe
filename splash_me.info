@@ -3,3 +3,5 @@ description = "Adds the ability to use a node as a splash page"
 core = "7.x"
 php = "5.2"
 version = "1.0"
+dependencies[] = libraries
+dependencies[] = colorbox

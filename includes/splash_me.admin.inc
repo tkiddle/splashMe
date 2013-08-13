@@ -31,6 +31,14 @@
 		//Create new array to hold form elements
 		$form = array();
 
+		$form['splash_me_dev_mode'] = array (
+			'#type' => 'checkbox',
+			'#title' => t('Developer mode'),
+			'#description' => t('Clears the session after 10 seconds rather than 24hrs.'),
+			'#default_value' => variable_get('splash_me_dev_mode', 0),
+			'#required' => FALSE
+		);
+
 		//Add an auto-complete field to the array
 		$form['splash_me_node_lookup'] = array(
 
@@ -52,6 +60,119 @@
 			'#autocomplete_path' => 'splash-me-node-results'
 
 		);
+
+		//Choose between a modal window and a page
+		$form['splash_me_view_type'] = array(
+			//Type of field
+			'#type' => 'radios',
+			//Label for the field
+			'#title' => t('View type'),
+			//Options for the radio buttons
+			'#options' => array(0 => t('Full page'), 1 => t('Modal window')),
+			//Get the value from the DB if it exists
+			'#default_value' => variable_get('splash_me_view_type', 0),
+			//Description of the field
+			'#description' => t("Choose between a modal window and full page views."),
+			//Whether the field is required
+			'#required' => TRUE
+		);
+
+		//Add an auto-complete field to the array
+		$form['splash_me_modal_content'] = array(
+
+			//Type of field
+			'#type' => 'textfield',
+			//Label for the field
+			'#title' => t('jQuery selector'),
+			//Get the value from the DB if it exists
+			'#default_value' => variable_get('splash_me_modal_content'),
+			//HTML input width
+			'#size' => 40,
+			//Max length of chars
+			'#maxlength' => 60,
+			//Description of the field
+			'#description' => t("jQuery selector of the content to use in the modal window i.e. #content .main"),
+			//Whether the field is required
+			'#required' => FALSE,
+			//Visibility state
+			'#states' => array(
+			    // Only show this field when the 'toggle_me' checkbox is enabled.
+			    'visible' => array(
+			      ':input[name="splash_me_view_type"]' => array('value' => 1),
+			    )
+			)
+
+		);
+
+		//Add an auto-complete field to the array
+		$form['splash_me_modal_width'] = array(
+
+			//Type of field
+			'#type' => 'textfield',
+			//Label for the field
+			'#title' => t('Modal width'),
+			//Get the value from the DB if it exists
+			'#default_value' => variable_get('splash_me_modal_width', '50%'),
+			//HTML input width
+			'#size' => 40,
+			//Max length of chars
+			'#maxlength' => 60,
+			//Description of the field
+			'#description' => t('Width of the modal window see: http://www.jacklmoore.com/colorbox'),
+			//Whether the field is required
+			'#required' => FALSE,
+			//Visibility state
+			'#states' => array(
+			    // Only show this field when the 'toggle_me' checkbox is enabled.
+			    'visible' => array(
+			      ':input[name="splash_me_view_type"]' => array('value' => 1),
+			    )
+			)
+
+		);
+
+		$form['splash_me_modal_close'] = array (
+			'#type' => 'checkbox',
+			'#title' => t('Display a close button'),
+			'#description' => t('Displays a close button for the modal window.'),
+			'#default_value' => variable_get('splash_me_modal_close', 1),
+			'#required' => FALSE,
+			'#states' => array(
+			    // Only show this field when the 'toggle_me' checkbox is enabled.
+			    'visible' => array(
+			      ':input[name="splash_me_view_type"]' => array('value' => 1),
+			    )
+			)
+		);
+
+		//Add an auto-complete field to the array
+		$form['splash_me_modal_delay'] = array(
+
+			//Type of field
+			'#type' => 'textfield',
+			//Label for the field
+			'#title' => t('Modal window delay'),
+			//Get the value from the DB if it exists
+			'#default_value' => variable_get('splash_me_modal_delay'),
+			//HTML input width
+			'#size' => 40,
+			//Max length of chars
+			'#maxlength' => 60,
+			//Description of the field
+			'#description' => t("The delay time in milliseconds before the modal window appears. Leave blank for no delay."),
+			//Whether the field is required
+			'#required' => FALSE,
+			//Visibility state
+			'#states' => array(
+			    // Only show this field when the 'toggle_me' checkbox is enabled.
+			    'visible' => array(
+			      ':input[name="splash_me_view_type"]' => array('value' => 1),
+			    )
+			)
+
+		);
+
+
 
 		$form['splash_me_continue_link'] = array (
 
@@ -127,27 +248,7 @@
 
 		);
 
-		unset($themesArray);
-
-
-		$form['splash_me_redirect_time'] = array(
-
-			//Type of field
-			'#type' => 'textfield',
-			//Label for the field
-			'#title' => t('Redirect time'),
-			//Get the value from the DB else use 20 which is the default
-			'#default_value' => variable_get('splash_me_redirect_time', 20),
-			//HTML input width
-			'#size' => 3,
-			//Max length of chars
-			'#maxlength' => 6,
-			//Description of the field
-			'#description' => t("The time it takes to redirect back to the homepage in seconds."),
-			//Whether the field is required
-			'#required' => FALSE
-
-		);
+		unset($themesArray);		
 
 		
 		//Once the form is built return it passing the $form array

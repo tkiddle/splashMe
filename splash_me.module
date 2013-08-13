@@ -64,19 +64,51 @@
 			//If user is not logged in
 			if(!$GLOBALS['user']->uid){
 				
-				if (arg(1) !== $splashPage){
+				//If view equals 'full page'
+				if (variable_get('splash_me_view_type') == 0) {
+					
+					if (arg(1) !== $splashPage){
 
-					//Redirect to the splash screen
-					drupal_goto('node/' . $splashPage);	
+						//Redirect to the splash screen
+						drupal_goto('node/' . $splashPage);	
+
+					}
+
+				} else {
+
+					//Assign some values to the Drupal.settings object
+					drupal_add_js(
+						array(
+						  'splashMe' => array(
+						    'jQuerySelector' => variable_get('splash_me_modal_content'),
+						    'modalWidth' => variable_get('splash_me_modal_width'),
+						    'modalClose' => variable_get('splash_me_modal_close'),
+						    'ajaxUrl' => 'node/' . variable_get('splash_me_node_lookup'),
+						    'delayTime' => variable_get('splash_me_modal_delay')
+						  ),
+						),
+						'setting'
+					);
+
+					//Place the JS file on the page
+					drupal_add_js('sites/all/modules/splash_me/includes/js/splash-me.js', array(
+					    'weight' => '-1000',
+					    'type' => 'external',
+					  )
+					);
 
 				}
 
 			}
 
 		}
-			
+		
+		//Check if Developer mode is set
+		$moduleMode = variable_get('splash_me_dev_mode');
+		$sesClearTime = $moduleMode == 1 ? 10 : 60 * 60 * 24;
+
 		//Test to see if expiery time is up
-		if (date("U", time())  >= $_SESSION['splash_me_conf']['time_set'] + (10)){
+		if (date("U", time())  >= $_SESSION['splash_me_conf']['time_set'] + ($sesClearTime)){
 
 			//If the time is up unset the var and reset the process
 			unset($_SESSION['splash_me_conf']);
