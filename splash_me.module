@@ -10,7 +10,7 @@
   	
 	  	$items = array();
 
-		$items['admin/config/user-interface/splash_me'] = array(
+		$items['admin/config/lazypixel/splash_me'] = array(
 			'title' => 'Splash Me',
 			'description' => 'Configuration for the Splash Me module.',
 			'page callback' => 'drupal_get_form',
@@ -32,6 +32,7 @@
 	}
 	
 	function splash_me_init() {	
+
 
 		//Get the values from admin page
 		$splashPage = variable_get('splash_me_node_lookup');
@@ -63,14 +64,16 @@
 
 			//If user is not logged in
 			if(!$GLOBALS['user']->uid){
-				
+					
+				global $base_url;
+
 				//If view equals 'full page'
 				if (variable_get('splash_me_view_type') == 0) {
 					
 					if (arg(1) !== $splashPage){
 
 						//Redirect to the splash screen
-						drupal_goto('node/' . $splashPage);	
+						drupal_goto($base_url . '/node/' . $splashPage);	
 
 					}
 
@@ -82,16 +85,19 @@
 						  'splashMe' => array(
 						    'jQuerySelector' => variable_get('splash_me_modal_content'),
 						    'modalWidth' => variable_get('splash_me_modal_width'),
+						    'overlayOpacity' =>variable_get('splash_me_modal_opacity'),
+						    'overlayColour' =>variable_get('splash_me_overlay_colour'),
 						    'modalClose' => variable_get('splash_me_modal_close'),
-						    'ajaxUrl' => 'node/' . variable_get('splash_me_node_lookup'),
-						    'delayTime' => variable_get('splash_me_modal_delay')
+						    'ajaxUrl' => $base_url . '/node/' . variable_get('splash_me_node_lookup'),
+						    'delayTime' => variable_get('splash_me_modal_delay'),
+						    'continueLinkClose' => variable_get('splash_me_continue_close_link')
 						  ),
 						),
 						'setting'
-					);
+					);			
 
 					//Place the JS file on the page
-					drupal_add_js('sites/all/modules/splash_me/includes/js/splash-me.js', array(
+					drupal_add_js($base_url . '/sites/all/modules/splash_me/includes/js/splash-me.js', array(
 					    'weight' => '-1000',
 					    'type' => 'external',
 					  )
@@ -105,7 +111,7 @@
 		
 		//Check if Developer mode is set
 		$moduleMode = variable_get('splash_me_dev_mode');
-		$sesClearTime = $moduleMode == 1 ? 10 : 60 * 60 * 24;
+		$sesClearTime = ($moduleMode == 1) ? 10 : 60 * 60 * 24;
 
 		//Test to see if expiery time is up
 		if (date("U", time())  >= $_SESSION['splash_me_conf']['time_set'] + ($sesClearTime)){
@@ -174,11 +180,14 @@
 
 		if (variable_get('splash_me_continue_link')) {
 
-			$continueUrl = variable_get('splash_me_continue_url');
+
 			$continueText = variable_get('splash_me_continue_link_text');
+			$continueClose = variable_get('splash_me_continue_close_link');
+			$continueUrl = ($continueClose == 1) ? '#' : variable_get('splash_me_continue_url');
+			$continueId = ($continueClose == 1) ? 'id="splash-me-close"' : '';
 
 			$node->content['splash_me_continue_link'] = array(
-				"#markup"=> '<a href=" '. $continueUrl . '" title="Continue to the site">'. $continueText .'</a>',
+				"#markup"=> '<a href="'. $continueUrl .'" '. $continueId .' class="splash-me-continue" title="Continue to the site">'. $continueText .'</a>',
 				"#weight"=> 100
 			);              
 
