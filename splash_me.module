@@ -62,8 +62,8 @@
 		//If 'show' var is TRUE perform redirect
 		if($_SESSION['splash_me_conf']['show'] === 'TRUE') {		
 
-			//If user is not logged in
-			if(!$GLOBALS['user']->uid){
+			//If user is not logged in -DISABLED
+			//if(!$GLOBALS['user']->uid){
 					
 				global $base_url;
 
@@ -105,7 +105,7 @@
 
 				}
 
-			}
+			//}
 
 		}
 		
