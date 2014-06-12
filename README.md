@@ -18,3 +18,8 @@ Installation:
 - Place the SplashMe module inside your sites modules folder
 - Enable the module in Administer > Modules
 - Configure module options
+
+Dependancies:
+
+- Libraries - https://drupal.org/project/libraries
+- Colorbox - https://drupal.org/project/colorbox
