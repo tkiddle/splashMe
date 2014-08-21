@@ -1,9 +1,10 @@
-splashMe
+Splash Me
 ========
 
-SplashMe - Drupal 7 Splash screen module
+Splash Me - Drupal 7 Splash screen module
 
-Features:
+Features
+--------
 
 - Splash screen modal window or page option
 - Custom splash screen links
@@ -13,13 +14,15 @@ Features:
 - Dev mode
 
 
-Installation:
+Installation Instructions
+-------------------------
 
 - Place the SplashMe module inside your sites modules folder
 - Enable the module in Administer > Modules
 - Configure module options
 
-Dependancies:
+Dependancies
+------------
 
 - Libraries - https://drupal.org/project/libraries
 - Colorbox - https://drupal.org/project/colorbox
