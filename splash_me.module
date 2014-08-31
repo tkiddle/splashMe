@@ -53,14 +53,14 @@
 			//if 'show' var not set then set it
 			if(!isset($_SESSION['splash_me_conf']['show'])) {
 
-				$_SESSION['splash_me_conf']['show'] = 'TRUE';
+				$_SESSION['splash_me_conf']['show'] = 1;
 
 			}
 
 		}				
 
 		//If 'show' var is TRUE perform redirect
-		if($_SESSION['splash_me_conf']['show'] === 'TRUE') {		
+		if($_SESSION['splash_me_conf']['show'] == 1) {		
 
 			//If user is not logged in -DISABLED
 			//if(!$GLOBALS['user']->uid){
@@ -122,7 +122,7 @@
 		} else {
 
 			//Prevent further redirects for user
-			$_SESSION['splash_me_conf']['show'] = 'FALSE';
+			$_SESSION['splash_me_conf']['show'] = 0;
 
 		}
 	
